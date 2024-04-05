@@ -1,50 +1,85 @@
 BEGIN;
 
--- Vérifier si la table player existe déjà
-IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class WHERE relname='player') THEN
-  CREATE TABLE player (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL
-  );
-END IF;
+-- Supprimer les tables existantes
+DROP TABLE IF EXISTS game_extension;
+DROP TABLE IF EXISTS boss_state;
+DROP TABLE IF EXISTS boss;
+DROP TABLE IF EXISTS extension;
+DROP TABLE IF EXISTS player_card;
+DROP TABLE IF EXISTS special_card;
+DROP TABLE IF EXISTS class;
+DROP TABLE IF EXISTS player_game;
+DROP TABLE IF EXISTS game;
+DROP TABLE IF EXISTS player;
 
--- Vérifier si la table game existe déjà
-IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class WHERE relname='game') THEN
-  CREATE TABLE game (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-  );
-END IF;
+-- Créer les tables
+CREATE TABLE player (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
 
--- Vérifier si la table class existe déjà
-IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class WHERE relname='class') THEN
-  CREATE TABLE class (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
-  );
-END IF;
+CREATE TABLE game (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  state VARCHAR(255) NOT NULL
+);
 
--- Vérifier si la table card existe déjà
-IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class WHERE relname='card') THEN
-  CREATE TABLE card (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    type VARCHAR(255) NOT NULL,
-    class_id BIGINT REFERENCES class(id)
-  );
-END IF;
+CREATE TABLE player_game (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  skill VARCHAR(255),
+  skill_level INTEGER,
+  cp1 VARCHAR(255),
+  cp1_level INTEGER,
+  cp2 VARCHAR(255),
+  cp2_level INTEGER,
+  player_id INTEGER REFERENCES player(id),
+  game_id INTEGER REFERENCES game(id)
+);
 
--- Vérifier si la table hero existe déjà
-IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_class WHERE relname='hero') THEN
-  CREATE TABLE hero (
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    player_id BIGINT REFERENCES player(id),
-    game_id BIGINT REFERENCES game(id),
-    class_id BIGINT REFERENCES class(id)
-  );
-END IF;
+CREATE TABLE class (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
 
+CREATE TABLE special_card (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  type VARCHAR(255) NOT NULL,
+  class_id INTEGER REFERENCES class(id)
+);
+
+CREATE TABLE player_card (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  special_card_id INTEGER REFERENCES special_card(id),
+  player_game_id INTEGER REFERENCES player_game(id)
+);
+
+CREATE TABLE extension (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE boss (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  extension_id INTEGER REFERENCES extension(id),
+  special_card_id INTEGER REFERENCES special_card(id)
+);
+
+CREATE TABLE boss_state (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  boss_id INTEGER REFERENCES boss(id),
+  game_id INTEGER REFERENCES game(id),
+  state VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE game_extension (
+  id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  game_id INTEGER REFERENCES game(id),
+  extension_id INTEGER REFERENCES extension(id)
+);
+
+-- Commettre la transaction
 COMMIT;

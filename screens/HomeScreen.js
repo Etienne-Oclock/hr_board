@@ -4,8 +4,7 @@ import { useBoundStore } from "../store/store";
 
 
 const HomeScreen = ({ navigation }) => {
-  const {setUserId, setUserName} = useBoundStore();
-  
+  const {setUserId, setUserName, setUser,  user} = useBoundStore();
   
   const fakeUser = [
     {
@@ -21,8 +20,7 @@ const HomeScreen = ({ navigation }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const {textContent, value} = event.target.querySelector('select').selectedOptions[0];
-    setUserId(value);
-    setUserName(textContent);
+    setUser(textContent, value);
   };
 
   return (
@@ -32,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
       <form method="post" onSubmit={handleSubmit}>
         
         <label>
-          Choisissez votre fruit préféré :
+          T'es qui :
           <select name="selectedUser">
             {fakeUser.map((user) => (
               <option key={user.id} value={user.id}  data-name={user.name}>

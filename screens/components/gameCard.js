@@ -3,12 +3,13 @@ import GameScreen from "../GameScreen";
 
 
 export default gameCard = ({gameInfo, navigation}) => {
-
+    console.log('gameInfo :>> ', gameInfo);
+    
     return( 
         <View style={styles.container}>
             <Text style={styles.title}>{gameInfo.id}</Text>
             <Text style={styles.title}>{gameInfo.name}</Text>
-            <Pressable onPress={() => navigation.navigate('GameScreen', {gameInfo, navigation})}>
+            <Pressable onPress={() => navigation.navigate('GameScreen', { gameInfo })}>
                 <Text>
                     Let's go
                 </Text>

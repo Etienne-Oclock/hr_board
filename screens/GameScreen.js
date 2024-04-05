@@ -2,11 +2,20 @@ import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
 
-const GameScreen = ({fullGameInfo, navigation }) => {
+const GameScreen = ({navigation, route }) => {
+
+    const { gameInfo } = route.params;
+
     return(
         <View style= {styles.container}>
             <Text style={styles.title}>Game Screen</Text>
-
+            {gameInfo ? 
+             (
+                <Text>gameInfo dnas la place : {gameInfo.id} - {gameInfo.name}</Text>
+             ):(
+                <Text>Pas de jeux charger bébé ! </Text>
+             )
+            }
         </View>
     );
 };

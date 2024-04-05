@@ -8,10 +8,8 @@ import { useBoundStore } from "../store/store";
 const ListGameScreen = ({ navigation }) => {
 
   const {user} = useBoundStore();
-  console.log('navigation :>> ', navigation);
   return (
     <View style={styles.container}>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
       <Text>Hello {user?.name} !!!</Text>
       {gameData.games.map((game) => (
         <GameCard gameInfo={game} navigation={navigation} key={game.id} />
